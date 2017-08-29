@@ -286,10 +286,14 @@ class SubNameBrute:
                     msg = cur_sub_domain.ljust(30) + ips
                     self._print_msg(msg, _found_msg=True)
                     self._print_msg()
+                    ips = []
+                    for answer in answers:
+                        if 'address' in dir(answer):
+                            ips.append(answer.address)
                     self.host_db.save({'_id': self._md5(cur_sub_domain), 'host': cur_sub_domain, 'domain': self.target,
-                                       'ips': sorted([answer.address for answer in answers]),
+                                       'ips': sorted(ips),
                                        'timestamp': int(time.time())})
-                    for ip in sorted([answer.address for answer in answers]):
+                    for ip in sorted(ips):
                         if self.ip_db.find_one({'_id': str(self._ip_into_int(ip))}):
                             hosts = list(
                                 self.ip_db.find_one({'_id': str(self._ip_into_int(ip))}).get('hosts')).append(
